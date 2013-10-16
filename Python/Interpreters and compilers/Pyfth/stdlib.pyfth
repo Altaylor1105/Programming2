@@ -1,0 +1,126 @@
+# =============== standard commands ============
+
+
+
+
+
+echo #prints a string
+	dup
+	len 0 for i
+		dup i swap index
+		print_char
+	loop
+	drop
+;
+
+echo_data #prints the contents of a list
+	dup
+	32 print_char
+	len 0 for i
+		dup i swap index
+		print
+		32 print_char
+	loop
+	drop	
+;
+
+CR 10 print_char ; #carriage return
+comma_and_space
+	44 32 print_char print_char
+;
+
+# ================ Array commands ================
+array.dump 			#dumps the contents of an array to the stack
+	dup
+	len 1 - -1 swap for i
+		dup i swap
+		index swap
+	loop
+	len
+;
+
+array.fill #fills an array from the stack
+	local reference
+	reference len 0 for i 
+		i reference
+		insert
+	loop
+;
+
+array.slice
+	#start, end, reference ==> [array[start]....array[end]]
+	local array
+	for i
+		i array index
+	loop
+;
+
+array.insert_slice
+	#[data] start, end, reference
+	local array
+	for i
+		i array inser
+	loop
+;
+
+array.compare #compares two arrays and returns a bit
+	#referenceB referenceA ==> 1 if equal else 0
+	local A
+	local B
+	A len B len 
+	= if 
+		A len 0 for i
+			i A index i B index =
+			if 
+			else
+				0 return
+			endif
+		loop
+		1 return
+	else
+		0 return
+	endif
+;
+
+array.append #adds a value to an array
+	#value reference ==> none
+	local reference
+	reference array.dump drop 							#puts array values on stack
+	reference len 1 +  reference ref_array 				#creates a new array
+
+	reference array.fill
+
+;
+
+array.pop #pops from high end of array
+	#reference ==> value
+	local reference
+	reference array.dump drop 									#values go onto stack
+	reference len 1 - ref_array 								#create new array which is one value shorter
+	reference len 0 for i 										#essentially the array.fill command, but ignores last value -it is left on top of stack
+		i reference insert
+	loop
+;
+
+array.sum
+	#reference ==> value
+	local reference
+	0 								#sum
+	reference len 0 for i
+		i reference index +
+	loop
+;
+
+
+# ================= Maths ========================
+sqrt #x,accuracy ==> sqrt(x)
+	2 local guess 
+	0 for i
+		dup
+		guess /
+		guess +
+		2 /
+		local guess
+	loop
+	drop guess
+;
